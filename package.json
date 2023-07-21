@@ -1,14 +1,12 @@
 {
 	"name": "@dankolz/picture-ckeditor-plugin",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "",
 	"main": "server-js/integrate.js",
-	"scripts": {
-	},
+	"scripts": {},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"dependencies": {},
 	"devDependencies": {
 	},
 	"browserify": {

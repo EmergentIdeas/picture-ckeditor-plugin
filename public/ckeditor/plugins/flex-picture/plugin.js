@@ -163,6 +163,22 @@ CKEDITOR.plugins.add('flex-picture', {
 					img.style.left = 0
 					img.style.right = 0
 				}
+				else {
+					if(data.align) {
+						if(data.align.includes('left')) {
+							img.style.marginLeft = '0'
+							img.style.marginRight = 'auto'
+						}
+						else if(data.align.includes('right')) {
+							img.style.marginLeft = 'auto'
+							img.style.marginRight = '0'
+						}
+						else if(data.align.includes('center')) {
+							img.style.marginLeft = 'auto'
+							img.style.marginRight = 'auto'
+						}
+					}
+				}
 				if(data.scaling) {
 					let value = ''
 					if(data.scaling == 'flex-picture-scaling-cover') {
