@@ -24,7 +24,7 @@ function setIfExists(widget, attr) {
 function setIfExistsCheckbox(widget, attr) {
 	var w = widget.element.$.attributes.getNamedItem('data-' + attr)
 	if (w) {
-		widget.setData(attr, w.value)
+		widget.setData(attr, w.value == 'false' ? false : true)
 	}
 }
 
