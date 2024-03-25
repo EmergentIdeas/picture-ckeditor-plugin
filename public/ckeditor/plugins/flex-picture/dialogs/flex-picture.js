@@ -1,4 +1,50 @@
 CKEDITOR.dialog.add('flex-picture', function (editor) {
+	let treeBrowserAvailable = false	
+	if(window['@webhandle/tree-file-browser'] 
+	&& window['@webhandle/tree-file-browser'].FileSelectDialog 
+	&& window['@webhandle/tree-file-browser'].loadStyles
+	&& window.webhandle 
+	&& window.webhandle.sinks
+	&& window.webhandle.sinks.public
+	) {
+		treeBrowserAvailable = true
+	}
+	let browseButton =  {
+		type: 'button',
+		id: 'browse',
+		label: editor.lang.common.browseServer,
+		hidden: false,
+		setup: function (widget) {
+		},
+		commit: function (widget) {
+		}
+	}
+	
+	if(treeBrowserAvailable) {
+		browseButton.onClick = async function(one, two, three, four) {
+			document.querySelector('.cke_dialog_background_cover').style['z-index'] = 9997
+			document.querySelector('.cke_dialog_container').style['z-index'] = 9998
+			window['@webhandle/tree-file-browser'].loadStyles()
+			prefix = 'img'
+			let FileSelectDialog = window['@webhandle/tree-file-browser'].FileSelectDialog
+			let diag = new FileSelectDialog({
+				sink: webhandle.sinks.public
+				, startingDirectory: prefix
+				, imagesOnly: true
+			})
+			let result = await diag.open()
+
+			if(result && result.url) {
+				let path = result.url
+				one.data.dialog.getModel().setData('picsource', path);
+				one.data.dialog.getContentElement('info', 'picsource').setValue(path)
+			}
+		}
+	}
+	else {
+		browseButton.filebrowser = 'info:picsource'
+	}
+	
 	return {
 		title: 'Edit Picture',
 		minWidth: 700,
@@ -52,18 +98,7 @@ CKEDITOR.dialog.add('flex-picture', function (editor) {
 							widget.setData( 'picsource', this.getValue() );
 						}
 					}
-					, {
-						type: 'button',
-						id: 'browse',
-						label: editor.lang.common.browseServer,
-						hidden: false,
-						filebrowser: 'info:picsource',
-						setup: function (widget) {
-						},
-						commit: function (widget) {
-						}
-					}
-
+					, browseButton
 				]
 			}
 			, {
