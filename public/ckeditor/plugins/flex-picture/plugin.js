@@ -62,7 +62,7 @@ CKEDITOR.plugins.add('flex-picture', {
 
 			button: 'Create a picture',
 
-			template: `<figure class="flex-picture" style="margin: 0;">
+			template: `<figure class="flex-picture" style="margin: 0; position: relative;">
 						<div class="pic">
 						</div>
 						<figcaption>&nbsp;
@@ -77,7 +77,8 @@ CKEDITOR.plugins.add('flex-picture', {
 			dialog: 'flex-picture',
 			dataAttributes: ['alttext', 'link', 'linktarget', 'picsource', 'align', 'layout', 'bordercss', 'verticalalign', 'usecaption',
 			'additionalclasses', 'additionalstyles', 'targetwidth', 'targetheight', 'aspectratio', 'scaling', 'margintop', 'marginright', 
-			'marginbottom', 'marginleft', 'paddingtop', 'paddingright', 'paddingbottom', 'paddingleft' ],
+			'marginbottom', 'marginleft', 'paddingtop', 'paddingright', 'paddingbottom', 'paddingleft',
+			'maxwidth', 'maxheight', 'justifyimage' ],
 
 			upcast: function (element) {
 				return element.name == 'figure' && element.hasClass('flex-picture');
@@ -97,7 +98,21 @@ CKEDITOR.plugins.add('flex-picture', {
 				// let's clear out the old info
 				flexPicture.className = 'flex-picture'
 				flexPicture.style = `${data.additionalstyles || ''}`
+				flexPicture.style.position = 'relative' 
 				flexPicture.removeAttribute('onclick')
+				
+				if(data.maxwidth) {
+					flexPicture.style.maxWidth = data.maxwidth
+				}
+				else {
+					flexPicture.style.maxWidth = '100%'
+				}
+				if(data.maxheight) {
+					flexPicture.style.maxHeight = data.maxheight
+				}
+				else {
+					flexPicture.style.maxHeight = 'none'
+				}
 				
 				
 				let linkPart = ''
@@ -165,10 +180,17 @@ CKEDITOR.plugins.add('flex-picture', {
 				if(data.bordercss) {
 					flexPicture.style.border = data.bordercss
 				}
+				else {
+					flexPicture.style.border = ''
+
+				}
 
 
 				if(this.data.additionalclasses) {
 					this.element.$.className = this.element.$.className + ' ' + data.additionalclasses
+				}
+				else {
+					this.element.$.className = this.element.$.className 
 				}
 				// addClassIfDataExists(this, 'layout')
 				
@@ -184,27 +206,51 @@ CKEDITOR.plugins.add('flex-picture', {
 				
 				
 				if(data.aspectratio) {
-					picture.style.aspectRatio = data.aspectratio
-					img.style.position = 'absolute'
-					img.style.left = 0
-					img.style.right = 0
-				}
-				else {
-					if(data.align) {
-						if(data.align.includes('left')) {
-							img.style.marginLeft = '0'
-							img.style.marginRight = 'auto'
-						}
-						else if(data.align.includes('right')) {
-							img.style.marginLeft = 'auto'
-							img.style.marginRight = '0'
-						}
-						else if(data.align.includes('center')) {
-							img.style.marginLeft = 'auto'
-							img.style.marginRight = 'auto'
-						}
+					flexPicture.style.aspectRatio = data.aspectratio
+					if(img) {
+						img.style.position = 'absolute'
+						img.style.left = 0
+						img.style.right = 0
+						img.style.height = "100%"
 					}
 				}
+				else {
+					// clean up properties which are only meaningful in an a context
+					// where we have an aspect ratio
+					delete data.align
+					delete data.scaling
+					delete data.aspectratio
+
+					if(img) {
+						img.style.position = 'relative'
+						img.style.left = 'auto'
+						img.style.right = 'auto'
+						img.style.height = "auto"
+					}
+
+				}
+
+				if(data.justifyimage && data.layout && data.layout.indexOf('float') < 0) {
+					if(data.justifyimage.includes('left')) {
+						img.style.marginLeft = '0'
+						img.style.marginRight = 'auto'
+						flexPicture.style.marginLeft = '0'
+						flexPicture.style.marginRight = 'auto'
+					}
+					else if(data.justifyimage.includes('right')) {
+						img.style.marginLeft = 'auto'
+						img.style.marginRight = '0'
+						flexPicture.style.marginLeft = 'auto'
+						flexPicture.style.marginRight = '0'
+					}
+					else if(data.justifyimage.includes('center')) {
+						img.style.marginLeft = 'auto'
+						img.style.marginRight = 'auto'
+						flexPicture.style.marginLeft = 'auto'
+						flexPicture.style.marginRight = 'auto'
+					}
+				}
+
 				if(data.scaling) {
 					let value = ''
 					if(data.scaling == 'flex-picture-scaling-cover') {
