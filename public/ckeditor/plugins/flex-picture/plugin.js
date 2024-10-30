@@ -75,8 +75,9 @@ CKEDITOR.plugins.add('flex-picture', {
 			},
 
 			dialog: 'flex-picture',
-			dataAttributes: ['alttext', 'link', 'linktarget', 'picsource', 'align', 'layout', 'bordercss', 'verticalalign', 'usecaption',
-			'additionalclasses', 'additionalstyles', 'targetwidth', 'targetheight', 'aspectratio', 'scaling', 'margintop', 'marginright', 
+			dataAttributes: ['alttext', 'link', 'linktarget', 'picsource', 'align', 'layout', 'bordercss', 
+				// 'verticalalign', 
+				'usecaption', 'additionalclasses', 'additionalstyles', 'targetwidth', 'targetheight', 'aspectratio', 'scaling', 'margintop', 'marginright', 
 			'marginbottom', 'marginleft', 'paddingtop', 'paddingright', 'paddingbottom', 'paddingleft',
 			'maxwidth', 'maxheight', 'justifyimage' ],
 
@@ -217,9 +218,9 @@ CKEDITOR.plugins.add('flex-picture', {
 				else {
 					// clean up properties which are only meaningful in an a context
 					// where we have an aspect ratio
-					delete data.align
-					delete data.scaling
-					delete data.aspectratio
+					data.align = ''
+					data.scaling = ''
+					data.aspectratio = ''
 
 					if(img) {
 						img.style.position = 'relative'
@@ -230,7 +231,7 @@ CKEDITOR.plugins.add('flex-picture', {
 
 				}
 
-				if(data.justifyimage && data.layout && data.layout.indexOf('float') < 0) {
+				if(data.justifyimage && (!data.layout || (data.layout && data.layout.indexOf('float') < 0))) {
 					if(data.justifyimage.includes('left')) {
 						img.style.marginLeft = '0'
 						img.style.marginRight = 'auto'
