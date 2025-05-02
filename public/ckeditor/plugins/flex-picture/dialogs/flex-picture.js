@@ -88,6 +88,17 @@ CKEDITOR.dialog.add('flex-picture', function (editor) {
 							widget.setData('usecaption', this.getValue());
 						}
 					}
+					, {
+						id: 'captiontext',
+						type: 'text',
+						label: 'A caption for this image',
+						setup: function (widget) {
+							this.setValue(widget.data.captiontext);
+						},
+						commit: function (widget) {
+							widget.setData('captiontext', this.getValue());
+						}
+					}
 				]
 			}
 			, {

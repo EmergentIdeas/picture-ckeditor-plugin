@@ -28,7 +28,7 @@ function unescapeAttributeValue(s, preserveCR) {
 function setIfExists(widget, attr) {
 	var w = widget.element.$.attributes.getNamedItem('data-' + attr)
 	if (w) {
-		widget.setData(attr, w.value)
+		widget.setData(attr, w.value || '')
 	}
 }
 function setIfExistsCheckbox(widget, attr) {
@@ -62,12 +62,12 @@ CKEDITOR.plugins.add('flex-picture', {
 
 			button: 'Create a picture',
 
-			template: `<figure class="flex-picture" style="margin: 0; position: relative;">
-						<div class="pic">
-						</div>
-						<figcaption>&nbsp;
-						</figcaption>
-					</figure>`
+			template: `<span class="flex-picture" style="margin: 0; position: relative;">
+						<span class="pic">
+						</span>
+						<span class="figcaption">&nbsp;
+						</span>
+					</span>`
 			, editables: {
 				caption: {
 					selector: 'figcaption'
@@ -77,12 +77,12 @@ CKEDITOR.plugins.add('flex-picture', {
 			dialog: 'flex-picture',
 			dataAttributes: ['alttext', 'link', 'linktarget', 'picsource', 'align', 'layout', 'bordercss', 
 				// 'verticalalign', 
-				'usecaption', 'additionalclasses', 'additionalstyles', 'targetwidth', 'targetheight', 'aspectratio', 'scaling', 'margintop', 'marginright', 
+				'usecaption', 'captiontext', 'additionalclasses', 'additionalstyles', 'targetwidth', 'targetheight', 'aspectratio', 'scaling', 'margintop', 'marginright', 
 			'marginbottom', 'marginleft', 'paddingtop', 'paddingright', 'paddingbottom', 'paddingleft',
 			'maxwidth', 'maxheight', 'justifyimage' ],
 
 			upcast: function (element) {
-				return element.name == 'figure' && element.hasClass('flex-picture');
+				return (element.name == 'figure' || element.name == 'span') && element.hasClass('flex-picture');
 			},
 
 			init: function () {
@@ -143,6 +143,9 @@ CKEDITOR.plugins.add('flex-picture', {
 					if(data.targetwidth && data.targetwidth.trim().endsWith('px')) {
 						options.displayWidth = data.targetwidth
 					}
+					if(data.alttext) {
+						options.alt = data.alttext
+					}
 					pic.innerHTML = makeMarkup(this.data.picsource, options)
 				}
 				else {
@@ -151,7 +154,7 @@ CKEDITOR.plugins.add('flex-picture', {
 
 				let picture = flexPicture.querySelector('picture')	
 				let img = flexPicture.querySelector('img')	
-				let caption = flexPicture.querySelector('figcaption')	
+				let caption = flexPicture.querySelector('figcaption') || flexPicture.querySelector('.figcaption')	
 				
 				if(linkEx) {
 					picture.setAttribute('onclick', linkEx)
@@ -266,8 +269,11 @@ CKEDITOR.plugins.add('flex-picture', {
 					img.style.objectPosition = data.align
 				}
 				
-				if(data.usecaption && data.usecaption != 'false') {
+				if(data.usecaption && data.usecaption != 'false' && caption) {
 					caption.style.display = 'block'
+					if(data.captiontext) {
+						caption.innerHTML = data.captiontext
+					}
 				}
 				else {
 					caption.style.display = 'none'
