@@ -30,6 +30,9 @@ function setIfExists(widget, attr) {
 	if (w) {
 		widget.setData(attr, w.value || '')
 	}
+	else {
+		widget.setData(attr, '')
+	}
 }
 function setIfExistsCheckbox(widget, attr) {
 	var w = widget.element.$.attributes.getNamedItem('data-' + attr)
@@ -91,6 +94,10 @@ CKEDITOR.plugins.add('flex-picture', {
 				}
 				setIfExistsCheckbox(this, 'usecaption')
 				setIfExistsCheckbox(this, 'linktarget')
+				
+				if(!this.data.layout) {
+					this.setData('layout', 'flex-picture-show-inline-block')	
+				}
 			},
 			data: function () {
 				let data = this.data
@@ -155,6 +162,8 @@ CKEDITOR.plugins.add('flex-picture', {
 				let picture = flexPicture.querySelector('picture')	
 				let img = flexPicture.querySelector('img')	
 				let caption = flexPicture.querySelector('figcaption') || flexPicture.querySelector('.figcaption')	
+				let wrapper = this.element.$.parentElement
+
 				
 				if(linkEx) {
 					picture.setAttribute('onclick', linkEx)
@@ -176,9 +185,11 @@ CKEDITOR.plugins.add('flex-picture', {
 				}
 				if(data.layout == 'flex-picture-float-on-right') {
 					flexPicture.style.float = 'right'
+					wrapper.style.float = 'right'
 				}
 				if(data.layout == 'flex-picture-float-on-left') {
 					flexPicture.style.float = 'left'
+					wrapper.style.float = 'left'
 				}
 				
 				if(data.bordercss) {
@@ -253,6 +264,11 @@ CKEDITOR.plugins.add('flex-picture', {
 						flexPicture.style.marginLeft = 'auto'
 						flexPicture.style.marginRight = 'auto'
 					}
+					flexPicture.style.display = 'block'
+					wrapper.style.display = 'block'
+				}
+				else {
+					wrapper.style.display = ''
 				}
 
 				if(data.scaling) {
@@ -279,29 +295,6 @@ CKEDITOR.plugins.add('flex-picture', {
 					caption.style.display = 'none'
 				}
 				
-				
-				// if (!this.data.align) {
-				// 	this.element.find('.pic').getItem(0).removeStyle('background-position')
-				// }
-				// else {
-				// 	this.element.find('.pic').getItem(0).setStyle('background-position', this.data.align)
-				// }
-
-				// if (this.data.picsource) {
-				// 	this.element.find('.pic').getItem(0).setStyle('background-image', 'url("' + this.data.picsource + '")')
-				// }
-
-				// if (this.data.link) {
-				// 	this.element.find('.link').getItem(0).setAttribute('href', this.data.link)
-				// }
-				
-				// let val = this.data.linkText || '0'
-				// let el = this.element.find('.link-text').getItem(0)
-				// if(el) {
-				// 	el.setText(val)
-				// }
-
-
 				for (var i in this.dataAttributes) {
 					this.element.setAttribute('data-' + this.dataAttributes[i], this.data[this.dataAttributes[i]])
 				}
